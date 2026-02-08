@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cricket World Cup Sixes Counter</title>
+  <style>
+    /* Reset + basic styles */
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+    body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #f3f3f3; }
+    
+    .container {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    h1 { font-size: 1.8rem; color: #333; margin-bottom: 1rem; }
+    .count {
+      font-size: 3rem;
+      font-weight: bold;
+      color: #e63946;
+      margin: 1rem 0;
+    }
+
+    .team-list {
+      margin-top: 2rem;
+      text-align: left;
+    }
+
+    .team-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+      padding: 0.5rem;
+      background: #f9f9f9;
+      border-radius: 6px;
+    }
+
+    .team-name { font-weight: 600; }
+    .team-sixes { color: #457b9d; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>🏏 World Cup Sixes Counter</h1>
+    <div class="count" id="total-sixes">0</div>
+    <div class="team-list" id="team-sixes">
+      <!-- Team sixes will be populated here -->
+    </div>
+  </div>
+
+  <script>
+    const totalEl = document.getElementById('total-sixes');
+    const teamEl = document.getElementById('team-sixes');
+
+    async function fetchSixes() {
+      try {
+        // Replace with your serverless API endpoint or proxy
+        const res = await fetch('https://your-serverless-endpoint.com/worldcup-sixes');
+        const data = await res.json();
+
+        // Total sixes
+        totalEl.textContent = data.totalSixes;
+
+        // Team-by-team breakdown
+        teamEl.innerHTML = '';
+        data.teams.forEach(team => {
+          const div = document.createElement('div');
+          div.classList.add('team-item');
+          div.innerHTML = `
+            <span class="team-name">${team.name}</span>
+            <span class="team-sixes">${team.sixes}</span>
+          `;
+          teamEl.appendChild(div);
+        });
+      } catch (err) {
+        console.error(err);
+        totalEl.textContent = 'Error';
+        teamEl.innerHTML = '<div style="color:red;">Could not load team data.</div>';
+      }
+    }
+
+    // Auto-refresh every 30 seconds
+    fetchSixes();
+    setInterval(fetchSixes, 30000);
+  </script>
+</body>
+</html>
