@@ -1,94 +1,225 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cricket World Cup Sixes Counter</title>
-  <style>
-    /* Reset + basic styles */
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
-    body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #f3f3f3; }
-    
-    .container {
-      background: #fff;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      text-align: center;
-      width: 90%;
-      max-width: 400px;
-    }
-
-    h1 { font-size: 1.8rem; color: #333; margin-bottom: 1rem; }
-    .count {
-      font-size: 3rem;
-      font-weight: bold;
-      color: #e63946;
-      margin: 1rem 0;
-    }
-
-    .team-list {
-      margin-top: 2rem;
-      text-align: left;
-    }
-
-    .team-item {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 0.5rem;
-      padding: 0.5rem;
-      background: #f9f9f9;
-      border-radius: 6px;
-    }
-
-    .team-name { font-weight: 600; }
-    .team-sixes { color: #457b9d; font-weight: 700; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 WC Sixes Tracker</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        h1 {
+            text-align: center;
+            color: #1a73e8;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .target-box {
+            background-color: #e8f0fe;
+            color: #1a73e8;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box; /* Ensures padding doesn't affect width */
+            transition: border-color 0.2s;
+        }
+        input[type="number"]:focus {
+            border-color: #1a73e8;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #1557b0;
+        }
+        .results {
+            margin-top: 25px;
+            border-top: 2px solid #f0f2f5;
+            padding-top: 20px;
+            display: none; /* Hidden by default */
+        }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
+        .result-value {
+            font-weight: bold;
+        }
+        .highlight {
+            color: #d93025; /* Red for emphasis */
+            font-size: 18px;
+        }
+        .status-good {
+            color: #188038; /* Green */
+        }
+        .status-bad {
+            color: #d93025; /* Red */
+        }
+    </style>
 </head>
 <body>
 
-  <div class="container">
-    <h1>🏏 World Cup Sixes Counter</h1>
-    <div class="count" id="total-sixes">0</div>
-    <div class="team-list" id="team-sixes">
-      <!-- Team sixes will be populated here -->
+<div class="container">
+    <h1>🏏 Sixes Tracker</h1>
+    
+    <div class="target-box">
+        Target: 730 Sixes (55 Matches)
     </div>
-  </div>
 
-  <script>
-    const totalEl = document.getElementById('total-sixes');
-    const teamEl = document.getElementById('team-sixes');
+    <div class="input-group">
+        <label for="gamesPlayed">Games Played So Far</label>
+        <input type="number" id="gamesPlayed" placeholder="e.g. 12">
+    </div>
 
-    async function fetchSixes() {
-      try {
-        // Replace with your serverless API endpoint or proxy
-        const res = await fetch('https://your-serverless-endpoint.com/worldcup-sixes');
-        const data = await res.json();
+    <div class="input-group">
+        <label for="sixesHit">Total Sixes Hit</label>
+        <input type="number" id="sixesHit" placeholder="e.g. 150">
+    </div>
 
-        // Total sixes
-        totalEl.textContent = data.totalSixes;
+    <button onclick="calculate()">Calculate</button>
 
-        // Team-by-team breakdown
-        teamEl.innerHTML = '';
-        data.teams.forEach(team => {
-          const div = document.createElement('div');
-          div.classList.add('team-item');
-          div.innerHTML = `
-            <span class="team-name">${team.name}</span>
-            <span class="team-sixes">${team.sixes}</span>
-          `;
-          teamEl.appendChild(div);
-        });
-      } catch (err) {
-        console.error(err);
-        totalEl.textContent = 'Error';
-        teamEl.innerHTML = '<div style="color:red;">Could not load team data.</div>';
-      }
+    <div class="results" id="resultsArea">
+        <div class="result-item">
+            <span>Games Remaining:</span>
+            <span class="result-value" id="gamesRemaining">0</span>
+        </div>
+        <div class="result-item">
+            <span>Sixes Short:</span>
+            <span class="result-value" id="sixesShort">0</span>
+        </div>
+        <div class="result-item">
+            <span>Current Avg/Game:</span>
+            <span class="result-value" id="currentAvg">0</span>
+        </div>
+        <div class="result-item" style="margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 15px;">
+            <span style="font-size: 16px; font-weight: bold;">Needed Per Game:</span>
+            <span class="result-value highlight" id="neededPerGame">0</span>
+        </div>
+        <div id="statusMessage" style="text-align: center; margin-top: 15px; font-style: italic; font-size: 14px;"></div>
+    </div>
+</div>
+
+<script>
+    function calculate() {
+        // Constants
+        const TOTAL_GAMES = 55;
+        const TARGET_SIXES = 730;
+
+        // Get inputs
+        const gamesPlayed = parseFloat(document.getElementById('gamesPlayed').value);
+        const sixesHit = parseFloat(document.getElementById('sixesHit').value);
+
+        // Validation
+        if (isNaN(gamesPlayed) || isNaN(sixesHit)) {
+            alert("Please enter valid numbers for both fields.");
+            return;
+        }
+        if (gamesPlayed > TOTAL_GAMES) {
+            alert("Games played cannot exceed 55.");
+            return;
+        }
+
+        // Calculations
+        const gamesRemaining = TOTAL_GAMES - gamesPlayed;
+        const sixesShort = TARGET_SIXES - sixesHit;
+        
+        let currentAvg = 0;
+        if (gamesPlayed > 0) {
+            currentAvg = (sixesHit / gamesPlayed).toFixed(2);
+        }
+
+        let neededPerGame = 0;
+        if (gamesRemaining > 0) {
+            neededPerGame = (sixesShort / gamesRemaining).toFixed(2);
+        } else if (sixesShort <= 0) {
+            neededPerGame = "Won";
+        } else {
+            neededPerGame = "Lost";
+        }
+
+        // Display Results
+        document.getElementById('resultsArea').style.display = 'block';
+        document.getElementById('gamesRemaining').innerText = gamesRemaining;
+        document.getElementById('sixesShort').innerText = sixesShort > 0 ? sixesShort : 0;
+        document.getElementById('currentAvg').innerText = currentAvg;
+        document.getElementById('neededPerGame').innerText = neededPerGame;
+
+        // Status Message logic
+        const statusEl = document.getElementById('statusMessage');
+        const neededNum = parseFloat(neededPerGame);
+        
+        // If we have won or lost, handled above, but if game is ongoing:
+        if (gamesRemaining > 0) {
+             // The "Par" rate needed at the start was 13.27 (730/55)
+            const parRate = 13.27; 
+            
+            if (sixesShort <= 0) {
+                statusEl.innerHTML = "<span class='status-good'>Target already reached! 🎉</span>";
+                document.getElementById('neededPerGame').innerText = "0";
+            } else if (neededNum <= currentAvg) {
+                statusEl.innerHTML = "<span class='status-good'>You are on track! Keep it up. 👍</span>";
+                document.getElementById('neededPerGame').className = "result-value status-good";
+            } else {
+                const diff = (neededNum - currentAvg).toFixed(2);
+                statusEl.innerHTML = `<span class='status-bad'>Behind pace. Need to increase avg by ${diff} per game. 😬</span>`;
+                document.getElementById('neededPerGame').className = "result-value highlight";
+            }
+        } else {
+             if (sixesShort <= 0) {
+                statusEl.innerHTML = "<span class='status-good'>Congratulations! You won the bet. 💰</span>";
+             } else {
+                statusEl.innerHTML = "<span class='status-bad'>Better luck next time. 📉</span>";
+             }
+        }
     }
+</script>
 
-    // Auto-refresh every 30 seconds
-    fetchSixes();
-    setInterval(fetchSixes, 30000);
-  </script>
 </body>
 </html>
