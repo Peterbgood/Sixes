@@ -2,346 +2,224 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WC 2026 Sixes Tracker – Over 730 Bet</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 WC Sixes Tracker</title>
     <style>
-        :root {
-            --primary: #003580;
-            --accent: #ffcc00;
-            --bg: #f8f9fc;
-            --card: #ffffff;
-            --border: #e0e7ff;
-            --played: #e6f4ea;
-            --upcoming: #f5f5f5;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background: var(--bg);
-            color: #222;
-            padding: 12px;
-            line-height: 1.4;
-        }
-        .container { max-width: 1000px; margin: 0 auto; }
-        header {
-            background: linear-gradient(to bottom, var(--primary), #0040c0);
-            color: white;
-            padding: 20px 16px;
-            text-align: center;
-            border-radius: 12px;
-            margin-bottom: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        .progress {
-            background: var(--card);
-            padding: 16px;
-            border-radius: 12px;
-            margin-bottom: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            text-align: center;
-        }
-        .progress-bar {
-            height: 12px;
-            background: #e0e0e0;
-            border-radius: 6px;
-            overflow: hidden;
-            margin: 12px 0;
-        }
-        .progress-fill {
-            height: 100%;
-            background: var(--accent);
-            transition: width 0.5s ease;
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-            gap: 10px;
-            margin: 12px 0;
-        }
-        .stat-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            padding: 10px;
-            border-radius: 10px;
-            text-align: center;
-        }
-        .stat-label { font-size: 0.8em; color: #555; text-transform: uppercase; font-weight: 600; }
-        .stat-value { font-size: 1.6em; font-weight: 700; color: var(--primary); }
-        .grid-layout {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 16px;
-        }
-        .box {
-            background: var(--card);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.07);
-        }
-        .box-header {
-            padding: 14px;
-            background: #f0f4ff;
-            font-weight: 700;
-            font-size: 1.1em;
-            text-align: center;
-            border-bottom: 1px solid var(--border);
-        }
-        .scroll-area { max-height: 60vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-        table { width: 100%; border-collapse: collapse; }
-        th {
-            background: #f8f9ff;
-            padding: 10px 8px;
-            font-size: 0.9em;
-            text-align: center;
-            border-bottom: 2px solid var(--border);
-            position: sticky;
-            top: 0;
-            z-index: 2;
-        }
-        .match-row {
-            padding: 14px 10px;
-            border-bottom: 1px solid #eee;
-        }
-        .match-row.upcoming { background: var(--upcoming); color: #777; font-style: italic; }
-        .match-row.played { background: var(--played); }
-        .teams {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 1.05em;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-        .team { flex: 1; text-align: center; }
-        .vs-label {
-            font-size: 1.2em;
-            color: #888;
-            padding: 0 12px;
-            font-weight: bold;
-        }
-        .inputs-container {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 16px;
-            margin: 8px 0;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            color: #333;
         }
-        .match-input {
-            width: 70px;
-            padding: 10px;
-            font-size: 1.1em;
-            font-weight: bold;
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        h1 {
             text-align: center;
-            border: 2px solid #ccd5ff;
+            color: #1a73e8;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .target-box {
+            background-color: #e8f0fe;
+            color: #1a73e8;
+            padding: 15px;
             border-radius: 8px;
-            background: white;
-        }
-        .match-input:focus { border-color: var(--primary); outline: none; }
-        .match-total {
             text-align: center;
+            margin-bottom: 20px;
             font-weight: bold;
-            font-size: 1.2em;
-            color: var(--primary);
-            margin-top: 6px;
         }
-        .upcoming .match-total { color: #999; }
-        @media (min-width: 768px) {
-            .grid-layout { grid-template-columns: 1fr 1.5fr; }
-            .match-row { padding: 12px 16px; }
-            .teams { font-size: 1.1em; }
-            th { font-size: 1em; }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box; /* Ensures padding doesn't affect width */
+            transition: border-color 0.2s;
+        }
+        input[type="number"]:focus {
+            border-color: #1a73e8;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #1557b0;
+        }
+        .results {
+            margin-top: 25px;
+            border-top: 2px solid #f0f2f5;
+            padding-top: 20px;
+            display: none; /* Hidden by default */
+        }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
+        .result-value {
+            font-weight: bold;
+        }
+        .highlight {
+            color: #d93025; /* Red for emphasis */
+            font-size: 18px;
+        }
+        .status-good {
+            color: #188038; /* Green */
+        }
+        .status-bad {
+            color: #d93025; /* Red */
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-
-    <header>
-        <h1>🏏 2026 T20 WC Sixes Tracker</h1>
-        <p>Goal: >730 sixes after 55 matches</p>
-    </header>
-
-    <div class="progress">
-        <h2>Progress to 730</h2>
-        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-        <div class="stats-grid">
-            <div class="stat-card"><div class="stat-label">Sixes</div><div class="stat-value" id="totalSixes">0</div></div>
-            <div class="stat-card"><div class="stat-label">Played</div><div class="stat-value" id="gamesPlayed">0</div></div>
-            <div class="stat-card"><div class="stat-label">Avg</div><div class="stat-value" id="currentAvg">0.0</div></div>
-            <div class="stat-card"><div class="stat-label">Remaining</div><div class="stat-value" id="remaining">730</div></div>
-        </div>
+    <h1>🏏 Sixes Tracker</h1>
+    
+    <div class="target-box">
+        Target: 730 Sixes (55 Matches)
     </div>
 
-    <div class="grid-layout">
-
-        <div class="box">
-            <div class="box-header">🏆 Team Leaderboard</div>
-            <div class="scroll-area">
-                <table>
-                    <thead><tr><th>Rank</th><th>Team</th><th>6s</th><th>Avg</th></tr></thead>
-                    <tbody id="rankBody"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="box">
-            <div class="box-header">Matches & Sixes</div>
-            <div class="scroll-area">
-                <table>
-                    <thead><tr><th>#</th><th>Match</th><th>Sixes</th></tr></thead>
-                    <tbody id="matchBody"></tbody>
-                </table>
-            </div>
-        </div>
-
+    <div class="input-group">
+        <label for="gamesPlayed">Games Played So Far</label>
+        <input type="number" id="gamesPlayed" placeholder="e.g. 12">
     </div>
 
+    <div class="input-group">
+        <label for="sixesHit">Total Sixes Hit</label>
+        <input type="number" id="sixesHit" placeholder="e.g. 150">
+    </div>
+
+    <button onclick="calculate()">Calculate</button>
+
+    <div class="results" id="resultsArea">
+        <div class="result-item">
+            <span>Games Remaining:</span>
+            <span class="result-value" id="gamesRemaining">0</span>
+        </div>
+        <div class="result-item">
+            <span>Sixes Short:</span>
+            <span class="result-value" id="sixesShort">0</span>
+        </div>
+        <div class="result-item">
+            <span>Current Avg/Game:</span>
+            <span class="result-value" id="currentAvg">0</span>
+        </div>
+        <div class="result-item" style="margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 15px;">
+            <span style="font-size: 16px; font-weight: bold;">Needed Per Game:</span>
+            <span class="result-value highlight" id="neededPerGame">0</span>
+        </div>
+        <div id="statusMessage" style="text-align: center; margin-top: 15px; font-style: italic; font-size: 14px;"></div>
+    </div>
 </div>
 
 <script>
-    const TARGET = 730;
-    const TOTAL = 55;
-    const PLAYED = 18;
-    const KEY = 'wc2026_sixes_peter_v7';
+    function calculate() {
+        // Constants
+        const TOTAL_GAMES = 55;
+        const TARGET_SIXES = 730;
 
-    const schedule = [
-        ["Pakistan", "Netherlands", 6, 2],
-        ["West Indies", "Scotland", 11, 5],
-        ["India", "USA", 7, 7],
-        ["New Zealand", "Afghanistan", 7, 9],
-        ["England", "Nepal", 11, 7],
-        ["Sri Lanka", "Ireland", 3, 1],
-        ["Scotland", "Italy", 10, 7],
-        ["Zimbabwe", "Oman", 1, 0],
-        ["South Africa", "Canada", 7, 3],
-        ["Netherlands", "Namibia", 9, 7],
-        ["New Zealand", "UAE", 8, 7],
-        ["Pakistan", "USA", 10, 6],
-        ["South Africa", "Afghanistan", 10, 10],
-        ["Australia", "Ireland", 5, 5],
-        ["England", "West Indies", 6, 13],
-        ["Sri Lanka", "Oman", 8, 4],
-        ["Nepal", "Italy", 3, 9],
-        ["India", "Namibia", 14, 4],
-        ...Array(TOTAL - PLAYED).fill(["Upcoming", "Upcoming", "", ""])
-    ];
+        // Get inputs
+        const gamesPlayed = parseFloat(document.getElementById('gamesPlayed').value);
+        const sixesHit = parseFloat(document.getElementById('sixesHit').value);
 
-    function init() {
-        const body = document.getElementById('matchBody');
-        const saved = JSON.parse(localStorage.getItem(KEY)) || {};
-
-        schedule.forEach((m, i) => {
-            const row = document.createElement('tr');
-            const isPlayed = i < PLAYED;
-            const v1 = saved[`g${i}_1`] ?? (isPlayed ? (m[2] ?? '') : '');
-            const v2 = saved[`g${i}_2`] ?? (isPlayed ? (m[3] ?? '') : '');
-            const total = isPlayed ? ((parseInt(v1)||0) + (parseInt(v2)||0)) : '-';
-
-            row.className = isPlayed ? 'match-row played' : 'match-row upcoming';
-            row.innerHTML = `
-                <td style="text-align:center; font-weight:bold;">${i+1}</td>
-                <td>
-                    <div class="teams">
-                        <div class="team">${m[0]}</div>
-                        <div class="vs-label">vs</div>
-                        <div class="team">${m[1]}</div>
-                    </div>
-                    ${isPlayed ? `
-                        <div class="inputs-container">
-                            <input type="number" min="0" class="match-input" id="g${i}_1" value="${v1}" inputmode="numeric" oninput="recalc()" onchange="recalc()">
-                            <input type="number" min="0" class="match-input" id="g${i}_2" value="${v2}" inputmode="numeric" oninput="recalc()" onchange="recalc()">
-                        </div>
-                        <div class="match-total" id="g${i}_t">${total || '-'}</div>
-                    ` : `
-                        <div class="match-total" id="g${i}_t">-</div>
-                    `}
-                </td>
-                <td class="match-total" style="text-align:center;">${total}</td>
-            `;
-            body.appendChild(row);
-        });
-        recalc();
-    }
-
-    function recalc() {
-        let totalSixes = 0;
-        let playedCount = 0;
-        const store = {};
-        const teams = {};
-
-        for (let i = 0; i < TOTAL; i++) {
-            const isPlayed = i < PLAYED;
-            let s1 = 0, s2 = 0;
-
-            if (isPlayed) {
-                const el1 = document.getElementById(`g${i}_1`);
-                const el2 = document.getElementById(`g${i}_2`);
-                if (el1 && el2) {
-                    s1 = parseInt(el1.value) || 0;
-                    s2 = parseInt(el2.value) || 0;
-                    store[`g${i}_1`] = el1.value;
-                    store[`g${i}_2`] = el2.value;
-                }
-                const matchTot = s1 + s2;
-                document.getElementById(`g${i}_t`).innerText = matchTot || '-';
-
-                if (matchTot > 0) {
-                    totalSixes += matchTot;
-                    playedCount++;
-                }
-            }
-
-            const t1 = schedule[i][0];
-            const t2 = schedule[i][1];
-
-            if (t1 !== 'Upcoming' && t1 !== 'TBD') {
-                teams[t1] = teams[t1] || {sixes: 0, games: 0};
-                teams[t1].sixes += s1;
-                if (s1 + s2 > 0) teams[t1].games += 1;
-            }
-            if (t2 !== 'Upcoming' && t2 !== 'TBD') {
-                teams[t2] = teams[t2] || {sixes: 0, games: 0};
-                teams[t2].sixes += s2;
-                if (s1 + s2 > 0) teams[t2].games += 1;
-            }
+        // Validation
+        if (isNaN(gamesPlayed) || isNaN(sixesHit)) {
+            alert("Please enter valid numbers for both fields.");
+            return;
+        }
+        if (gamesPlayed > TOTAL_GAMES) {
+            alert("Games played cannot exceed 55.");
+            return;
         }
 
-        localStorage.setItem(KEY, JSON.stringify(store));
+        // Calculations
+        const gamesRemaining = TOTAL_GAMES - gamesPlayed;
+        const sixesShort = TARGET_SIXES - sixesHit;
+        
+        let currentAvg = 0;
+        if (gamesPlayed > 0) {
+            currentAvg = (sixesHit / gamesPlayed).toFixed(2);
+        }
 
-        // Debug check: sum of team sixes should == totalSixes
-        const sumTeamSixes = Object.values(teams).reduce((sum, t) => sum + t.sixes, 0);
-        console.log(`Total sixes: ${totalSixes} | Sum from teams: ${sumTeamSixes} | Match? ${totalSixes === sumTeamSixes}`);
+        let neededPerGame = 0;
+        if (gamesRemaining > 0) {
+            neededPerGame = (sixesShort / gamesRemaining).toFixed(2);
+        } else if (sixesShort <= 0) {
+            neededPerGame = "Won";
+        } else {
+            neededPerGame = "Lost";
+        }
 
-        const avg = playedCount ? (totalSixes / playedCount).toFixed(1) : '0.0';
-        const pct = Math.min(100, totalSixes / TARGET * 100).toFixed(0);
-        const rem = TARGET - totalSixes;
+        // Display Results
+        document.getElementById('resultsArea').style.display = 'block';
+        document.getElementById('gamesRemaining').innerText = gamesRemaining;
+        document.getElementById('sixesShort').innerText = sixesShort > 0 ? sixesShort : 0;
+        document.getElementById('currentAvg').innerText = currentAvg;
+        document.getElementById('neededPerGame').innerText = neededPerGame;
 
-        document.getElementById('totalSixes').innerText = totalSixes;
-        document.getElementById('gamesPlayed').innerText = playedCount;
-        document.getElementById('currentAvg').innerText = avg;
-        document.getElementById('remaining').innerText = rem;
-        document.getElementById('progressFill').style.width = pct + '%';
-
-        const sorted = Object.entries(teams)
-            .map(([name, {sixes, games}]) => ({
-                name,
-                sixes,
-                avg: games ? (sixes / games).toFixed(1) : '0.0'
-            }))
-            .sort((a, b) => b.sixes - a.sixes);
-
-        document.getElementById('rankBody').innerHTML = sorted.map((t, idx) => `
-            <tr>
-                <td style="text-align:center;">#${idx+1}</td>
-                <td>${t.name}</td>
-                <td>${t.sixes}</td>
-                <td>${t.avg}</td>
-            </tr>
-        `).join('') || '<tr><td colspan="4" style="text-align:center; padding:20px;">No teams yet</td></tr>';
+        // Status Message logic
+        const statusEl = document.getElementById('statusMessage');
+        const neededNum = parseFloat(neededPerGame);
+        
+        // If we have won or lost, handled above, but if game is ongoing:
+        if (gamesRemaining > 0) {
+             // The "Par" rate needed at the start was 13.27 (730/55)
+            const parRate = 13.27; 
+            
+            if (sixesShort <= 0) {
+                statusEl.innerHTML = "<span class='status-good'>Target already reached! 🎉</span>";
+                document.getElementById('neededPerGame').innerText = "0";
+            } else if (neededNum <= currentAvg) {
+                statusEl.innerHTML = "<span class='status-good'>You are on track! Keep it up. 👍</span>";
+                document.getElementById('neededPerGame').className = "result-value status-good";
+            } else {
+                const diff = (neededNum - currentAvg).toFixed(2);
+                statusEl.innerHTML = `<span class='status-bad'>Behind pace. Need to increase avg by ${diff} per game. 😬</span>`;
+                document.getElementById('neededPerGame').className = "result-value highlight";
+            }
+        } else {
+             if (sixesShort <= 0) {
+                statusEl.innerHTML = "<span class='status-good'>Congratulations! You won the bet. 💰</span>";
+             } else {
+                statusEl.innerHTML = "<span class='status-bad'>Better luck next time. 📉</span>";
+             }
+        }
     }
-
-    init();
 </script>
+
 </body>
 </html>
