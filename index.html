@@ -3,223 +3,319 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2026 WC Sixes Tracker</title>
+    <title>WC 2026 Sixes Tracker – Over 730 Bet</title>
     <style>
+        :root {
+            --primary: #003580;
+            --accent: #ffcc00;
+            --bg: #f0f4f8;
+            --card: #ffffff;
+            --border: #d1d9e6;
+            --played-bg: #e8f5e9;
+        }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f0f2f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
             margin: 0;
             padding: 20px;
             color: #333;
+            line-height: 1.5;
         }
-        .container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 400px;
-        }
-        h1 {
-            text-align: center;
-            color: #1a73e8;
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-        .target-box {
-            background-color: #e8f0fe;
-            color: #1a73e8;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-        .input-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            font-size: 14px;
-        }
-        input[type="number"] {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            box-sizing: border-box; /* Ensures padding doesn't affect width */
-            transition: border-color 0.2s;
-        }
-        input[type="number"]:focus {
-            border-color: #1a73e8;
-            outline: none;
-        }
-        button {
-            width: 100%;
-            padding: 15px;
-            background-color: #1a73e8;
+        .container { max-width: 1300px; margin: auto; }
+        header {
+            background: var(--primary);
             color: white;
-            border: none;
+            padding: 24px;
+            text-align: center;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .progress {
+            background: var(--card);
+            padding: 16px;
+            border-radius: 10px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        .progress-bar {
+            background: #e0e0e0;
             border-radius: 8px;
-            font-size: 16px;
+            height: 20px;
+            margin: 12px 0;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: var(--accent);
+            height: 100%;
+            transition: width 0.4s ease;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .stat-label { font-size: 0.9em; color: #666; text-transform: uppercase; font-weight: 600; }
+        .stat-value { font-size: 1.8em; font-weight: bold; color: var(--primary); }
+        .box {
+            background: var(--card);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+        .box-header {
+            padding: 16px;
+            background: #eceff1;
             font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: background-color 0.2s;
+            font-size: 1.2em;
+            text-align: center;
         }
-        button:hover {
-            background-color: #1557b0;
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th {
+            background: #f1f3f4;
+            position: sticky;
+            top: 0;
+            padding: 12px;
+            text-align: left;
+            border-bottom: 2px solid var(--border);
+            z-index: 2;
         }
-        .results {
-            margin-top: 25px;
-            border-top: 2px solid #f0f2f5;
-            padding-top: 20px;
-            display: none; /* Hidden by default */
-        }
-        .result-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 12px;
+        td { padding: 10px 12px; border-bottom: 1px solid #eee; }
+        .match-input {
+            width: 54px;
+            padding: 6px;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
             font-size: 15px;
         }
-        .result-value {
-            font-weight: bold;
-        }
-        .highlight {
-            color: #d93025; /* Red for emphasis */
-            font-size: 18px;
-        }
-        .status-good {
-            color: #188038; /* Green */
-        }
-        .status-bad {
-            color: #d93025; /* Red */
-        }
+        .team-label { display: inline-block; width: 130px; font-weight: 500; }
+        .sixes-total { font-weight: bold; text-align: center; min-width: 40px; }
+        .upcoming { background: #f9f9f9; color: #888; font-style: italic; }
+        .played { background: var(--played-bg); }
+        .scroll-area { max-height: 600px; overflow-y: auto; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1.3fr; gap: 24px; }
+        @media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>🏏 Sixes Tracker</h1>
-    
-    <div class="target-box">
-        Target: 730 Sixes (55 Matches)
+
+    <header>
+        <h1 style="margin:0">🏏 2026 T20 World Cup Sixes Tracker</h1>
+        <p style="margin:8px 0 4px; font-size:1.1em;">Bet Win: >730 sixes after 55 matches</p>
+        <p style="margin:0; opacity:0.9;">You're ahead — keep it going! 🚀</p>
+    </header>
+
+    <div class="progress">
+        <h2>Progress to 730 Sixes</h2>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width:0%"></div>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Current Sixes</div>
+                <div class="stat-value" id="totalSixes">242</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Matches Played</div>
+                <div class="stat-value" id="gamesPlayed">18</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Avg Sixes/Match</div>
+                <div class="stat-value" id="currentAvg">13.4</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Remaining to Target</div>
+                <div class="stat-value" id="remaining">488</div>
+            </div>
+        </div>
     </div>
 
-    <div class="input-group">
-        <label for="gamesPlayed">Games Played So Far</label>
-        <input type="number" id="gamesPlayed" placeholder="e.g. 12">
+    <div class="grid-2">
+
+        <div class="box">
+            <div class="box-header">🏆 Team Sixes Leaderboard</div>
+            <table>
+                <thead><tr><th>Rank</th><th>Team</th><th>Sixes</th><th>Avg</th></tr></thead>
+                <tbody id="rankBody"></tbody>
+            </table>
+        </div>
+
+        <div class="box">
+            <div class="scroll-area">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Matchup</th>
+                            <th>Sixes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="matchBody"></tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 
-    <div class="input-group">
-        <label for="sixesHit">Total Sixes Hit</label>
-        <input type="number" id="sixesHit" placeholder="e.g. 150">
-    </div>
-
-    <button onclick="calculate()">Calculate</button>
-
-    <div class="results" id="resultsArea">
-        <div class="result-item">
-            <span>Games Remaining:</span>
-            <span class="result-value" id="gamesRemaining">0</span>
-        </div>
-        <div class="result-item">
-            <span>Sixes Short:</span>
-            <span class="result-value" id="sixesShort">0</span>
-        </div>
-        <div class="result-item">
-            <span>Current Avg/Game:</span>
-            <span class="result-value" id="currentAvg">0</span>
-        </div>
-        <div class="result-item" style="margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 15px;">
-            <span style="font-size: 16px; font-weight: bold;">Needed Per Game:</span>
-            <span class="result-value highlight" id="neededPerGame">0</span>
-        </div>
-        <div id="statusMessage" style="text-align: center; margin-top: 15px; font-style: italic; font-size: 14px;"></div>
-    </div>
 </div>
 
 <script>
-    function calculate() {
-        // Constants
-        const TOTAL_GAMES = 55;
-        const TARGET_SIXES = 730;
+    const TARGET_SIXES = 730;
+    const TOTAL_MATCHES = 55;
+    const PLAYED_MATCHES = 18; // Update this number manually as more games finish
+    const STORE_KEY = 'wc_sixes_tracker_2026_v4'; // fresh key
 
-        // Get inputs
-        const gamesPlayed = parseFloat(document.getElementById('gamesPlayed').value);
-        const sixesHit = parseFloat(document.getElementById('sixesHit').value);
+    const schedule = [
+        ["Pakistan", "Netherlands", 6, 2],
+        ["West Indies", "Scotland", 11, 5],
+        ["India", "USA", 7, 7],
+        ["New Zealand", "Afghanistan", 7, 9],
+        ["England", "Nepal", 11, 7],
+        ["Sri Lanka", "Ireland", 3, 1],
+        ["Scotland", "Italy", 10, 7],
+        ["Zimbabwe", "Oman", 1, 0],
+        ["South Africa", "Canada", 7, 3],
+        ["Netherlands", "Namibia", 9, 7],
+        ["New Zealand", "UAE", 8, 7],
+        ["Pakistan", "USA", 10, 6],
+        ["South Africa", "Afghanistan", 10, 10],
+        ["Australia", "Ireland", 5, 5],
+        ["England", "West Indies", 6, 13],
+        ["Sri Lanka", "Oman", 8, 4],          // Updated from recent result? Adjust if needed
+        ["Nepal", "Italy", 3, 9],             // Adjust based on today's actual sixes
+        ["India", "Namibia", 14, 4],          // Adjust based on today's actual sixes
+        // Remaining matches — add real teams/sixes as they happen
+        ...Array(TOTAL_MATCHES - PLAYED_MATCHES).fill(["Upcoming", "Upcoming", 0, 0])
+    ];
 
-        // Validation
-        if (isNaN(gamesPlayed) || isNaN(sixesHit)) {
-            alert("Please enter valid numbers for both fields.");
-            return;
-        }
-        if (gamesPlayed > TOTAL_GAMES) {
-            alert("Games played cannot exceed 55.");
-            return;
-        }
+    function init() {
+        const matchBody = document.getElementById('matchBody');
+        const saved = JSON.parse(localStorage.getItem(STORE_KEY)) || {};
 
-        // Calculations
-        const gamesRemaining = TOTAL_GAMES - gamesPlayed;
-        const sixesShort = TARGET_SIXES - sixesHit;
-        
-        let currentAvg = 0;
-        if (gamesPlayed > 0) {
-            currentAvg = (sixesHit / gamesPlayed).toFixed(2);
-        }
+        schedule.forEach((matchData, i) => {
+            const row = document.createElement('tr');
+            const isPlayed = i < PLAYED_MATCHES;
+            const cls = isPlayed ? 'played' : 'upcoming';
+            const v1 = saved[`g${i}_1`] ?? (isPlayed ? matchData[2] : '');
+            const v2 = saved[`g${i}_2`] ?? (isPlayed ? matchData[3] : '');
 
-        let neededPerGame = 0;
-        if (gamesRemaining > 0) {
-            neededPerGame = (sixesShort / gamesRemaining).toFixed(2);
-        } else if (sixesShort <= 0) {
-            neededPerGame = "Won";
-        } else {
-            neededPerGame = "Lost";
-        }
-
-        // Display Results
-        document.getElementById('resultsArea').style.display = 'block';
-        document.getElementById('gamesRemaining').innerText = gamesRemaining;
-        document.getElementById('sixesShort').innerText = sixesShort > 0 ? sixesShort : 0;
-        document.getElementById('currentAvg').innerText = currentAvg;
-        document.getElementById('neededPerGame').innerText = neededPerGame;
-
-        // Status Message logic
-        const statusEl = document.getElementById('statusMessage');
-        const neededNum = parseFloat(neededPerGame);
-        
-        // If we have won or lost, handled above, but if game is ongoing:
-        if (gamesRemaining > 0) {
-             // The "Par" rate needed at the start was 13.27 (730/55)
-            const parRate = 13.27; 
-            
-            if (sixesShort <= 0) {
-                statusEl.innerHTML = "<span class='status-good'>Target already reached! 🎉</span>";
-                document.getElementById('neededPerGame').innerText = "0";
-            } else if (neededNum <= currentAvg) {
-                statusEl.innerHTML = "<span class='status-good'>You are on track! Keep it up. 👍</span>";
-                document.getElementById('neededPerGame').className = "result-value status-good";
+            let inputHtml = '';
+            if (isPlayed) {
+                inputHtml = `
+                    <input type="number" min="0" class="match-input" id="g${i}_1" value="${v1}"
+                           onchange="recalc()" onkeyup="recalc()">
+                    <span style="color:#777; margin:0 8px;">vs</span>
+                    <input type="number" min="0" class="match-input" id="g${i}_2" value="${v2}"
+                           onchange="recalc()" onkeyup="recalc()">
+                `;
             } else {
-                const diff = (neededNum - currentAvg).toFixed(2);
-                statusEl.innerHTML = `<span class='status-bad'>Behind pace. Need to increase avg by ${diff} per game. 😬</span>`;
-                document.getElementById('neededPerGame').className = "result-value highlight";
+                inputHtml = `<span>${v1 || '-'} vs ${v2 || '-'}</span>`;
             }
-        } else {
-             if (sixesShort <= 0) {
-                statusEl.innerHTML = "<span class='status-good'>Congratulations! You won the bet. 💰</span>";
-             } else {
-                statusEl.innerHTML = "<span class='status-bad'>Better luck next time. 📉</span>";
-             }
-        }
-    }
-</script>
 
+            row.innerHTML = `
+                <td>${i+1}</td>
+                <td class="${cls}">
+                    <span class="team-label">${matchData[0]}</span>
+                    ${inputHtml}
+                    <span class="team-label" style="text-align:right">${matchData[1]}</span>
+                </td>
+                <td class="sixes-total" id="g${i}_t">${isPlayed ? (parseInt(v1)||0) + (parseInt(v2)||0) : '-'}</td>
+            `;
+            row.className = cls;
+            matchBody.appendChild(row);
+        });
+
+        recalc();
+    }
+
+    function recalc() {
+        let total = 0, played = 0, storage = {}, teamStats = {};
+
+        for (let i = 0; i < TOTAL_MATCHES; i++) {
+            const isPlayed = i < PLAYED_MATCHES;
+            let s1 = 0, s2 = 0;
+
+            if (isPlayed) {
+                const v1 = document.getElementById(`g${i}_1`)?.value.trim() ?? '';
+                const v2 = document.getElementById(`g${i}_2`)?.value.trim() ?? '';
+                s1 = parseInt(v1) || 0;
+                s2 = parseInt(v2) || 0;
+
+                document.getElementById(`g${i}_t`).innerText = s1 + s2;
+                storage[`g${i}_1`] = v1;
+                storage[`g${i}_2`] = v2;
+            } else {
+                // Upcoming: ignore or 0
+                document.getElementById(`g${i}_t`).innerText = '-';
+            }
+
+            if (s1 + s2 > 0 || isPlayed) {  // Count as played if entered
+                total += s1 + s2;
+                played++;
+            }
+
+            const t1 = schedule[i][0];
+            const t2 = schedule[i][1];
+
+            if (t1 !== 'Upcoming' && t1 !== 'TBD') {
+                teamStats[t1] = teamStats[t1] || { sixes: 0, games: 0 };
+                teamStats[t1].sixes += s1;
+                teamStats[t1].games += 1;
+            }
+            if (t2 !== 'Upcoming' && t2 !== 'TBD') {
+                teamStats[t2] = teamStats[t2] || { sixes: 0, games: 0 };
+                teamStats[t2].sixes += s2;
+                teamStats[t2].games += 1;
+            }
+        }
+
+        localStorage.setItem(STORE_KEY, JSON.stringify(storage));
+
+        const avg = played ? (total / played).toFixed(1) : '0.0';
+        const pctSixes = Math.min(100, (total / TARGET_SIXES * 100)).toFixed(1);
+        const remaining = TARGET_SIXES - total;
+
+        document.getElementById('totalSixes').innerText = total;
+        document.getElementById('gamesPlayed').innerText = played;
+        document.getElementById('currentAvg').innerText = avg;
+        document.getElementById('remaining').innerText = remaining;
+        document.getElementById('progressFill').style.width = pctSixes + '%';
+
+        // Leaderboard
+        const sorted = Object.entries(teamStats)
+            .map(([name, stats]) => ({
+                name,
+                sixes: stats.sixes,
+                avg: stats.games ? (stats.sixes / stats.games).toFixed(1) : '0.0'
+            }))
+            .sort((a, b) => b.sixes - a.sixes);
+
+        document.getElementById('rankBody').innerHTML = sorted.map((t, idx) => `
+            <tr>
+                <td><span style="background:#e0e0e0; padding:4px 10px; border-radius:12px; font-weight:bold;">#${idx+1}</span></td>
+                <td>${t.name}</td>
+                <td>${t.sixes}</td>
+                <td style="color:#555">${t.avg}</td>
+            </tr>
+        `).join('');
+    }
+
+    init();
+</script>
 </body>
 </html>
