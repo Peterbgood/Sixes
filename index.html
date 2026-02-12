@@ -9,10 +9,10 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
   <style>
     body { background: linear-gradient(135deg, #0a0f1c, #1a2a2a); }
-    .cricket-green { color: #22c55e; }
-    .gold { color: #fbbf24; }
-    .table-row:hover { background-color: #1f2937; }
-    .progress-bar { transition: width 1.5s ease-out; }
+   .cricket-green { color: #22c55e; }
+   .gold { color: #fbbf24; }
+   .table-row:hover { background-color: #1f2937; }
+   .progress-bar { transition: width 1.5s ease-out; }
   </style>
 </head>
 <body class="text-white min-h-screen pb-12">
@@ -72,12 +72,7 @@
             <i class="fa-solid fa-trophy gold"></i>
             SIXES LEADERBOARD
           </h2>
-          <input 
-            id="searchInput"
-            type="text" 
-            placeholder="Search team..." 
-            class="bg-zinc-800 border border-zinc-700 rounded-xl px-5 py-3 focus:outline-none focus:border-emerald-500 w-64"
-          />
+          <!-- Search input for leaderboard is now removed from here -->
         </div>
 
         <table class="w-full" id="leaderboardTable">
@@ -96,7 +91,7 @@
 
       <!-- Top Teams Chart -->
       <div class="lg:col-span-5 bg-zinc-900/70 backdrop-blur-xl border border-emerald-900 rounded-3xl p-8">
-        <h2 class="text-2xl font-bold mb-6">Top 8 Teams</h2>
+        <h2 class="text-2xl font-bold mb-6">Top 8 Teams (Sixes)</h2>
         <canvas id="sixesChart" class="w-full h-96"></canvas>
       </div>
 
@@ -104,10 +99,18 @@
 
     <!-- All Matches -->
     <div class="mt-12">
-      <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
-        <i class="fa-solid fa-list"></i>
-        All Matches (18)
-      </h2>
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold flex items-center gap-3">
+          <i class="fa-solid fa-list"></i>
+          All Matches (18)
+        </h2>
+        <input 
+          id="searchInput"
+          type="text" 
+          placeholder="Search team..." 
+          class="bg-zinc-800 border border-zinc-700 rounded-xl px-5 py-3 focus:outline-none focus:border-emerald-500 w-64"
+        />
+      </div>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="matchesGrid"></div>
     </div>
 
@@ -127,7 +130,7 @@
       ["Netherlands", "Namibia", 9, 7],
       ["New Zealand", "UAE", 8, 7],
       ["Pakistan", "USA", 10, 6],
-      ["South Africa", "Afghanistan", 13, 13],
+      ["South Africa", "Afghanistan", 15, 14],
       ["Australia", "Ireland", 5, 5],
       ["England", "West Indies", 6, 13],
       ["Sri Lanka", "Oman", 8, 4],
@@ -142,6 +145,7 @@
     schedule.forEach(([t1, t2, s1, s2]) => {
       totalSixes += s1 + s2;
 
+      // Ensure teamStats[t1] and teamStats[t2] are initialized
       if (!teamStats[t1]) teamStats[t1] = { sixes: 0, matches: 0 };
       if (!teamStats[t2]) teamStats[t2] = { sixes: 0, matches: 0 };
 
@@ -156,7 +160,7 @@
       team,
       sixes: data.sixes,
       matches: data.matches,
-      avg: (data.sixes / data.matches).toFixed(1)
+      avg: data.matches > 0? (data.sixes / data.matches).toFixed(1) : 0 // Handle division by zero
     })).sort((a, b) => b.sixes - a.sixes);
 
     // Render Leaderboard
@@ -179,16 +183,16 @@
     }
 
     // Render Matches
-    function renderMatches() {
+    function renderMatches(filteredSchedule = schedule) { // Added filteredSchedule for search functionality
       const container = document.getElementById('matchesGrid');
       container.innerHTML = '';
 
-      schedule.forEach(([t1, t2, s1, s2]) => {
+      filteredSchedule.forEach(([t1, t2, s1, s2]) => {
         const total = s1 + s2;
         const isHigh = total >= 20;
 
         const card = document.createElement('div');
-        card.className = `bg-zinc-900/70 border ${isHigh ? 'border-lime-400' : 'border-zinc-700'} rounded-3xl p-6 hover:scale-105 transition-transform`;
+        card.className = `bg-zinc-900/70 border ${isHigh? 'border-lime-400' : 'border-zinc-700'} rounded-3xl p-6 hover:scale-105 transition-transform`;
         card.innerHTML = `
           <div class="flex justify-between items-center mb-4">
             <div class="text-right">
@@ -197,7 +201,7 @@
             </div>
             <div class="text-center">
               <div class="text-xs text-gray-500">VS</div>
-              <div class="text-xl font-bold ${isHigh ? 'text-lime-400' : ''}">${total}</div>
+              <div class="text-xl font-bold ${isHigh? 'text-lime-400' : ''}">${total}</div>
             </div>
             <div>
               <div class="font-semibold">${t2}</div>
@@ -210,11 +214,16 @@
     }
 
     // Chart
+    let sixesChartInstance = null; // Store chart instance
     function createChart() {
-      const top8 = leaderboardData.slice(0, 8);
+      const top8 = leaderboardData.slice(0, 8); // Always use the sorted leaderboardData for the chart
       const ctx = document.getElementById('sixesChart');
 
-      new Chart(ctx, {
+      if (sixesChartInstance) {
+          sixesChartInstance.destroy(); // Destroy existing chart before creating a new one
+      }
+
+      sixesChartInstance = new Chart(ctx, {
         type: 'bar',
         data: {
           labels: top8.map(t => t.team),
@@ -239,13 +248,13 @@
       });
     }
 
-    // Search functionality
+    // Search functionality (for "All Matches" section)
     document.getElementById('searchInput').addEventListener('input', (e) => {
       const term = e.target.value.toLowerCase();
-      const filtered = leaderboardData.filter(item => 
-        item.team.toLowerCase().includes(term)
+      const filteredMatches = schedule.filter(([t1, t2]) => 
+        t1.toLowerCase().includes(term) || t2.toLowerCase().includes(term)
       );
-      renderLeaderboard(filtered);
+      renderMatches(filteredMatches);
     });
 
     // Initialize everything
@@ -254,9 +263,9 @@
     document.getElementById('progressBar').style.width = `${progress}%`;
     document.getElementById('progressText').textContent = `${progress}%`;
 
-    renderLeaderboard(leaderboardData);
-    renderMatches();
-    createChart();
+    renderLeaderboard(leaderboardData); // Initial render of the full leaderboard
+    renderMatches(); // Initial render of all matches
+    createChart(); // Initial chart creation
   </script>
 </body>
 </html>
