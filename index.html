@@ -54,7 +54,7 @@
             border: 2px solid #ddd;
             border-radius: 8px;
             font-size: 16px;
-            box-sizing: border-box; /* Ensures padding doesn't affect width */
+            box-sizing: border-box;
             transition: border-color 0.2s;
         }
         input[type="number"]:focus {
@@ -81,7 +81,7 @@
             margin-top: 25px;
             border-top: 2px solid #f0f2f5;
             padding-top: 20px;
-            display: none; /* Hidden by default */
+            display: none;
         }
         .result-item {
             display: flex;
@@ -93,14 +93,14 @@
             font-weight: bold;
         }
         .highlight {
-            color: #d93025; /* Red for emphasis */
+            color: #d93025;
             font-size: 18px;
         }
         .status-good {
-            color: #188038; /* Green */
+            color: #188038;
         }
         .status-bad {
-            color: #d93025; /* Red */
+            color: #d93025;
         }
     </style>
 </head>
@@ -115,17 +115,21 @@
 
     <div class="input-group">
         <label for="gamesPlayed">Games Played So Far</label>
-        <input type="number" id="gamesPlayed" placeholder="e.g. 12">
+        <input type="number" id="gamesPlayed" placeholder="e.g. 10">
     </div>
 
     <div class="input-group">
         <label for="sixesHit">Total Sixes Hit</label>
-        <input type="number" id="sixesHit" placeholder="e.g. 150">
+        <input type="number" id="sixesHit" placeholder="e.g. 120">
     </div>
 
     <button onclick="calculate()">Calculate</button>
 
     <div class="results" id="resultsArea">
+        <div class="result-item">
+            <span>Current Pace vs Target:</span>
+            <span class="result-value" id="paceDiff">0</span>
+        </div>
         <div class="result-item">
             <span>Games Remaining:</span>
             <span class="result-value" id="gamesRemaining">0</span>
@@ -148,44 +152,38 @@
 
 <script>
     function calculate() {
-        // Constants
         const TOTAL_GAMES = 55;
         const TARGET_SIXES = 730;
+        const PAR_RATE = TARGET_SIXES / TOTAL_GAMES; // ~13.27
 
-        // Get inputs
         const gamesPlayed = parseFloat(document.getElementById('gamesPlayed').value);
         const sixesHit = parseFloat(document.getElementById('sixesHit').value);
 
-        // Validation
         if (isNaN(gamesPlayed) || isNaN(sixesHit)) {
-            alert("Please enter valid numbers for both fields.");
-            return;
-        }
-        if (gamesPlayed > TOTAL_GAMES) {
-            alert("Games played cannot exceed 55.");
+            alert("Please enter valid numbers.");
             return;
         }
 
-        // Calculations
         const gamesRemaining = TOTAL_GAMES - gamesPlayed;
         const sixesShort = TARGET_SIXES - sixesHit;
         
-        let currentAvg = 0;
-        if (gamesPlayed > 0) {
-            currentAvg = (sixesHit / gamesPlayed).toFixed(2);
-        }
-
-        let neededPerGame = 0;
-        if (gamesRemaining > 0) {
-            neededPerGame = (sixesShort / gamesRemaining).toFixed(2);
-        } else if (sixesShort <= 0) {
-            neededPerGame = "Won";
+        // 1. Calculate how many sixes you SHOULD have hit by now
+        const parSixesByNow = PAR_RATE * gamesPlayed;
+        const diff = (sixesHit - parSixesByNow).toFixed(1);
+        
+        let paceDiffText = "";
+        if (diff >= 0) {
+            paceDiffText = `<span class="status-good">+${diff} (Ahead)</span>`;
         } else {
-            neededPerGame = "Lost";
+            paceDiffText = `<span class="status-bad">${diff} (Behind)</span>`;
         }
 
-        // Display Results
+        let currentAvg = gamesPlayed > 0 ? (sixesHit / gamesPlayed).toFixed(2) : 0;
+        let neededPerGame = gamesRemaining > 0 ? (sixesShort / gamesRemaining).toFixed(2) : (sixesShort <= 0 ? "Won" : "Lost");
+
+        // Display
         document.getElementById('resultsArea').style.display = 'block';
+        document.getElementById('paceDiff').innerHTML = paceDiffText;
         document.getElementById('gamesRemaining').innerText = gamesRemaining;
         document.getElementById('sixesShort').innerText = sixesShort > 0 ? sixesShort : 0;
         document.getElementById('currentAvg').innerText = currentAvg;
@@ -193,30 +191,14 @@
 
         // Status Message logic
         const statusEl = document.getElementById('statusMessage');
-        const neededNum = parseFloat(neededPerGame);
-        
-        // If we have won or lost, handled above, but if game is ongoing:
         if (gamesRemaining > 0) {
-             // The "Par" rate needed at the start was 13.27 (730/55)
-            const parRate = 13.27; 
-            
             if (sixesShort <= 0) {
                 statusEl.innerHTML = "<span class='status-good'>Target already reached! 🎉</span>";
-                document.getElementById('neededPerGame').innerText = "0";
-            } else if (neededNum <= currentAvg) {
+            } else if (parseFloat(neededPerGame) <= PAR_RATE) {
                 statusEl.innerHTML = "<span class='status-good'>You are on track! Keep it up. 👍</span>";
-                document.getElementById('neededPerGame').className = "result-value status-good";
             } else {
-                const diff = (neededNum - currentAvg).toFixed(2);
-                statusEl.innerHTML = `<span class='status-bad'>Behind pace. Need to increase avg by ${diff} per game. 😬</span>`;
-                document.getElementById('neededPerGame').className = "result-value highlight";
+                statusEl.innerHTML = "<span class='status-bad'>Behind pace. Time to go big! 😬</span>";
             }
-        } else {
-             if (sixesShort <= 0) {
-                statusEl.innerHTML = "<span class='status-good'>Congratulations! You won the bet. 💰</span>";
-             } else {
-                statusEl.innerHTML = "<span class='status-bad'>Better luck next time. 📉</span>";
-             }
         }
     }
 </script>
