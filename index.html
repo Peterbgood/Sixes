@@ -107,7 +107,6 @@
         .status-bad {
             color: #d93025;
         }
-        /* Leaderboard styles */
         .leaderboard {
             margin-top: 20px;
         }
@@ -158,11 +157,11 @@
 
     <div class="input-group">
         <label for="gamesPlayed">Games Played So Far</label>
-        <input type="number" id="gamesPlayed" placeholder="e.g. 10">
+        <input type="number" id="gamesPlayed" placeholder="e.g. 21" value="21">
     </div>
     <div class="input-group">
         <label for="sixesHit">Total Sixes Hit</label>
-        <input type="number" id="sixesHit" placeholder="e.g. 120">
+        <input type="number" id="sixesHit" placeholder="e.g. 256" value="256">
     </div>
     <button onclick="calculate()">Calculate</button>
 
@@ -204,7 +203,6 @@
             <tbody id="leaderboardBody"></tbody>
         </table>
 
-        <!-- New Total Tally Section -->
         <div class="tally-box" id="totalTally">
             Total sixes so far: <strong id="totalSixes">0</strong><br>
             Matches completed: <strong id="matchesPlayed">0</strong> / 55
@@ -235,8 +233,16 @@ const schedule = [
     ["India", "Namibia", 14, 4],
     ["Australia", "Namibia", 3, 1],
     ["Canada", "UAE", 4, 7],
-    ["USA", "Netherlands", 5, 0]
+    ["USA", "Netherlands", 6, 0]
 ];
+
+// Pre-calculate totals for pre-filling
+const matchesCompleted = schedule.length;
+const totalSixesFromData = schedule.reduce((sum, match) => sum + match[2] + match[3], 0);
+
+// Auto-fill inputs on page load
+document.getElementById('gamesPlayed').value = matchesCompleted;
+document.getElementById('sixesHit').value = totalSixesFromData;
 
 // Build leaderboard + tally
 function buildLeaderboard() {
@@ -248,7 +254,6 @@ function buildLeaderboard() {
         countrySixes[team2] = (countrySixes[team2] || 0) + six2;
     });
 
-    // Sort descending by sixes
     const sorted = Object.entries(countrySixes)
         .sort((a, b) => b[1] - a[1]);
 
@@ -265,15 +270,11 @@ function buildLeaderboard() {
         tbody.appendChild(row);
     });
 
-    // Calculate totals
-    const totalSixes = schedule.reduce((sum, match) => sum + match[2] + match[3], 0);
-    const matchesPlayed = schedule.length;
-
-    document.getElementById('totalSixes').textContent = totalSixes;
-    document.getElementById('matchesPlayed').textContent = matchesPlayed;
+    document.getElementById('totalSixes').textContent = totalSixesFromData;
+    document.getElementById('matchesPlayed').textContent = matchesCompleted;
 }
 
-// Your original calculator function
+// Calculator function
 function calculate() {
     const TOTAL_GAMES = 55;
     const TARGET_SIXES = 730;
@@ -320,7 +321,7 @@ function calculate() {
     }
 }
 
-// Build on load
+// Run on load
 window.onload = buildLeaderboard;
 </script>
 </body>
