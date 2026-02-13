@@ -22,7 +22,7 @@
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             width: 100%;
-            max-width: 500px; /* slightly wider for leaderboard */
+            max-width: 500px;
         }
         h1 {
             text-align: center;
@@ -133,6 +133,19 @@
             font-weight: bold;
             color: #1a73e8;
         }
+        .tally-box {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f0fe;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 16px;
+            color: #1a73e8;
+        }
+        .tally-box strong {
+            font-size: 20px;
+            color: #1557b0;
+        }
     </style>
 </head>
 <body>
@@ -190,6 +203,12 @@
             </thead>
             <tbody id="leaderboardBody"></tbody>
         </table>
+
+        <!-- New Total Tally Section -->
+        <div class="tally-box" id="totalTally">
+            Total sixes so far: <strong id="totalSixes">0</strong><br>
+            Matches completed: <strong id="matchesPlayed">0</strong> / 55
+        </div>
     </div>
 </div>
 
@@ -214,12 +233,12 @@ const schedule = [
     ["Sri Lanka", "Oman", 8, 4],
     ["Nepal", "Italy", 3, 9],
     ["India", "Namibia", 14, 4],
-    ["Australia", "Zimbabwe", 3, 1],
-    ["Canada", "UAE", 4, 6],
-    ["USA", "Netherlands", 0, 0]
+    ["Australia", "Namibia", 3, 1],
+    ["Canada", "UAE", 4, 7],
+    ["USA", "Netherlands", 5, 0]
 ];
 
-// Calculate leaderboard once on page load
+// Build leaderboard + tally
 function buildLeaderboard() {
     const countrySixes = {};
     
@@ -245,6 +264,13 @@ function buildLeaderboard() {
         `;
         tbody.appendChild(row);
     });
+
+    // Calculate totals
+    const totalSixes = schedule.reduce((sum, match) => sum + match[2] + match[3], 0);
+    const matchesPlayed = schedule.length;
+
+    document.getElementById('totalSixes').textContent = totalSixes;
+    document.getElementById('matchesPlayed').textContent = matchesPlayed;
 }
 
 // Your original calculator function
@@ -294,7 +320,7 @@ function calculate() {
     }
 }
 
-// Build leaderboard when page loads
+// Build on load
 window.onload = buildLeaderboard;
 </script>
 </body>
