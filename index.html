@@ -5,149 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2026 WC Sixes Tracker</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f0f2f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            color: #333;
-        }
-        .container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 500px;
-        }
-        h1 {
-            text-align: center;
-            color: #1a73e8;
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-        h2 {
-            text-align: center;
-            color: #1557b0;
-            margin: 30px 0 15px;
-            font-size: 20px;
-        }
-        .target-box {
-            background-color: #e8f0fe;
-            color: #1a73e8;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-        .input-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            font-size: 14px;
-        }
-        input[type="number"] {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            box-sizing: border-box;
-            transition: border-color 0.2s;
-        }
-        input[type="number"]:focus {
-            border-color: #1a73e8;
-            outline: none;
-        }
-        .results {
-            margin-top: 25px;
-            border-top: 2px solid #f0f2f5;
-            padding-top: 20px;
-        }
-        .result-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 12px;
-            font-size: 15px;
-        }
-        .result-value {
-            font-weight: bold;
-        }
-        .highlight {
-            color: #d93025;
-        }
-        .status-good {
-            color: #188038;
-        }
-        .status-bad {
-            color: #d93025;
-        }
-        .leaderboard {
-            margin-top: 20px;
-        }
-        .leaderboard-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-        .leaderboard-table th, .leaderboard-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-        .leaderboard-table th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-        }
-        .leaderboard-table tr:hover {
-            background-color: #f8f9fa;
-        }
-        .rank {
-            width: 50px;
-            font-weight: bold;
-            color: #1a73e8;
-        }
-        .tally-box {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #e8f0fe;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 16px;
-            color: #1a73e8;
-        }
-        .tally-box strong {
-            font-size: 20px;
-            color: #1557b0;
-        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; color: #333; }
+        .container { background-color: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
+        h1 { text-align: center; color: #1a73e8; margin-bottom: 20px; font-size: 24px; }
+        h2 { text-align: center; color: #1557b0; margin: 30px 0 15px; font-size: 20px; }
+        .target-box { background-color: #e8f0fe; color: #1a73e8; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px; font-weight: bold; }
+        .results { margin-top: 25px; border-top: 2px solid #f0f2f5; padding-top: 20px; }
+        .result-item { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 15px; }
+        .result-value { font-weight: bold; }
+        .highlight { color: #d93025; }
+        .status-good { color: #188038; }
+        .status-bad { color: #d93025; }
+        .leaderboard-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .leaderboard-table th, .leaderboard-table td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        .leaderboard-table th { background-color: #f8f9fa; font-weight: 600; }
+        .rank { width: 50px; font-weight: bold; color: #1a73e8; }
+        .tally-box { margin-top: 20px; padding: 15px; background-color: #e8f0fe; border-radius: 8px; text-align: center; font-size: 16px; color: #1a73e8; }
+        .loading { text-align: center; font-style: italic; color: #666; }
+        /* Hidden inputs to maintain compatibility with your original updateResults logic */
+        #gamesPlayed, #sixesHit { display: none; }
     </style>
 </head>
 <body>
 <div class="container">
     <h1>🏏 2026 WC Sixes Tracker</h1>
    
-    <div class="target-box">
-        Target: 730 Sixes (55 Matches)
-    </div>
+    <div class="target-box">Target: 730 Sixes (55 Matches)</div>
 
-    <div class="input-group">
-        <label for="gamesPlayed">Games Played So Far</label>
-        <input type="number" id="gamesPlayed" placeholder="e.g. 21" value="21">
-    </div>
-    <div class="input-group">
-        <label for="sixesHit">Total Sixes Hit</label>
-        <input type="number" id="sixesHit" placeholder="e.g. 256" value="256">
-    </div>
+    <input type="number" id="gamesPlayed">
+    <input type="number" id="sixesHit">
 
-    <div class="results" id="resultsArea">
+    <div id="loadingMessage" class="loading">Fetching latest stats...</div>
+
+    <div class="results" id="resultsArea" style="display:none;">
         <div class="result-item">
             <span>Current Pace vs Target:</span>
             <span class="result-value" id="paceDiff">0</span>
@@ -171,151 +61,93 @@
         <div id="statusMessage" style="text-align: center; margin-top: 15px; font-style: italic; font-size: 14px;"></div>
     </div>
 
-    <!-- Leaderboard Section -->
-    <h2>🏆 Sixes Leaderboard by Country</h2>
+    <h2>🏆 Sixes Leaderboard</h2>
     <div class="leaderboard">
-        <table class="leaderboard-table" id="leaderboardTable">
+        <table class="leaderboard-table">
             <thead>
-                <tr>
-                    <th class="rank">#</th>
-                    <th>Country</th>
-                    <th style="text-align:right;">Sixes</th>
-                </tr>
+                <tr><th class="rank">#</th><th>Country</th><th style="text-align:right;">Sixes</th></tr>
             </thead>
             <tbody id="leaderboardBody"></tbody>
         </table>
-
-        <div class="tally-box" id="totalTally">
-            Total sixes so far: <strong id="totalSixes">0</strong><br>
-            Matches completed: <strong id="matchesPlayed">0</strong> / 55
+        <div class="tally-box">
+            Total sixes so far: <strong id="totalSixesDisplay">0</strong><br>
+            Matches completed: <strong id="matchesPlayedDisplay">0</strong> / 55
         </div>
     </div>
 </div>
 
 <script>
-// Your match data
-const schedule = [
-    ["Pakistan", "Netherlands", 6, 2],
-    ["West Indies", "Scotland", 11, 5],
-    ["India", "USA", 7, 7],
-    ["New Zealand", "Afghanistan", 7, 9],
-    ["England", "Nepal", 11, 7],
-    ["Sri Lanka", "Ireland", 3, 1],
-    ["Scotland", "Italy", 10, 7],
-    ["Zimbabwe", "Oman", 1, 0],
-    ["South Africa", "Canada", 7, 3],
-    ["Netherlands", "Namibia", 9, 7],
-    ["New Zealand", "UAE", 8, 7],
-    ["Pakistan", "USA", 10, 6],
-    ["South Africa", "Afghanistan", 10, 10],
-    ["Australia", "Ireland", 5, 5],
-    ["England", "West Indies", 6, 13],
-    ["Sri Lanka", "Oman", 8, 4],
-    ["Nepal", "Italy", 3, 9],
-    ["India", "Namibia", 14, 4],
-    ["Australia", "Zimbabwe", 3, 1],
-    ["Canada", "UAE", 4, 7],
-    ["USA", "Netherlands", 9, 2]
-];
+// YOUR CSV LINK (Converted from your pubhtml)
+const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRP-p1JY_jjcA0c0ZO7Ej_pZp5J1zGj1r1y5JPlVePrDgjyoIXPgFzMAa0S5j-k_5aaQdWzsnxlMONA/pub?output=csv';
 
-// Pre-calculate totals
-const matchesCompleted = schedule.length;
-const totalSixesFromData = schedule.reduce((sum, match) => sum + match[2] + match[3], 0);
+async function loadData() {
+    try {
+        const response = await fetch(csvUrl);
+        const csvText = await response.text();
+        
+        // Parse CSV Rows
+        const rows = csvText.split('\n').map(row => row.split(','));
+        
+        // Clean data: Filter out empty rows and skip header if present
+        // (Assuming first row is Pakistan/Netherlands data, not a header)
+        const schedule = rows.filter(r => r.length >= 4 && r[0].trim() !== "");
 
-// Auto-fill inputs
-document.getElementById('gamesPlayed').value = matchesCompleted;
-document.getElementById('sixesHit').value = totalSixesFromData;
-
-// Leaderboard + tally
-function buildLeaderboard() {
-    const countrySixes = {};
-    
-    schedule.forEach(match => {
-        const [team1, team2, six1, six2] = match;
-        countrySixes[team1] = (countrySixes[team1] || 0) + six1;
-        countrySixes[team2] = (countrySixes[team2] || 0) + six2;
-    });
-
-    const sorted = Object.entries(countrySixes)
-        .sort((a, b) => b[1] - a[1]);
-
-    const tbody = document.getElementById('leaderboardBody');
-    tbody.innerHTML = '';
-
-    sorted.forEach(([country, sixes], index) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td class="rank">${index + 1}</td>
-            <td>${country}</td>
-            <td style="text-align:right; font-weight:bold;">${sixes}</td>
-        `;
-        tbody.appendChild(row);
-    });
-
-    document.getElementById('totalSixes').textContent = totalSixesFromData;
-    document.getElementById('matchesPlayed').textContent = matchesCompleted;
+        renderTracker(schedule);
+    } catch (e) {
+        document.getElementById('loadingMessage').innerHTML = "Error loading data. Check spreadsheet publishing.";
+    }
 }
 
-// Real-time calculation
+function renderTracker(schedule) {
+    const totalSixes = schedule.reduce((sum, m) => sum + (parseInt(m[2]) || 0) + (parseInt(m[3]) || 0), 0);
+    const matchesDone = schedule.length;
+
+    // Update hidden inputs for calculation logic
+    document.getElementById('gamesPlayed').value = matchesDone;
+    document.getElementById('sixesHit').value = totalSixes;
+    
+    // Update Display
+    document.getElementById('totalSixesDisplay').innerText = totalSixes;
+    document.getElementById('matchesPlayedDisplay').innerText = matchesDone;
+
+    // Leaderboard logic
+    const countries = {};
+    schedule.forEach(m => {
+        countries[m[0]] = (countries[m[0]] || 0) + (parseInt(m[2]) || 0);
+        countries[m[1]] = (countries[m[1]] || 0) + (parseInt(m[3]) || 0);
+    });
+
+    const sorted = Object.entries(countries).sort((a,b) => b[1] - a[1]);
+    const tbody = document.getElementById('leaderboardBody');
+    tbody.innerHTML = sorted.map(([name, count], i) => `
+        <tr><td class="rank">${i+1}</td><td>${name}</td><td style="text-align:right; font-weight:bold;">${count}</td></tr>
+    `).join('');
+
+    document.getElementById('loadingMessage').style.display = 'none';
+    document.getElementById('resultsArea').style.display = 'block';
+    updateResults();
+}
+
 function updateResults() {
     const TOTAL_GAMES = 55;
     const TARGET_SIXES = 730;
     const PAR_RATE = TARGET_SIXES / TOTAL_GAMES;
 
-    const gamesPlayedInput = document.getElementById('gamesPlayed');
-    const sixesHitInput = document.getElementById('sixesHit');
-
-    const gamesPlayed = parseFloat(gamesPlayedInput.value) || 0;
-    const sixesHit = parseFloat(sixesHitInput.value) || 0;
-
-    // Basic validation / graceful handling
-    if (gamesPlayed < 0 || sixesHit < 0) {
-        document.getElementById('statusMessage').innerHTML = "<span class='status-bad'>Please enter non-negative numbers.</span>";
-        return;
-    }
+    const gamesPlayed = parseFloat(document.getElementById('gamesPlayed').value) || 0;
+    const sixesHit = parseFloat(document.getElementById('sixesHit').value) || 0;
 
     const gamesRemaining = TOTAL_GAMES - gamesPlayed;
     const sixesShort = TARGET_SIXES - sixesHit;
-    const parSixesByNow = PAR_RATE * gamesPlayed;
-    const diff = (sixesHit - parSixesByNow).toFixed(1);
+    const diff = (sixesHit - (PAR_RATE * gamesPlayed)).toFixed(1);
 
-    let paceDiffText = diff >= 0 
-        ? `<span class="status-good">+${diff} (Ahead)</span>`
-        : `<span class="status-bad">${diff} (Behind)</span>`;
-
-    const currentAvg = gamesPlayed > 0 ? (sixesHit / gamesPlayed).toFixed(2) : "0.00";
-    const neededPerGameRaw = gamesRemaining > 0 ? (sixesShort / gamesRemaining) : 0;
-    const neededPerGame = gamesRemaining > 0 
-        ? neededPerGameRaw.toFixed(2)
-        : (sixesShort <= 0 ? "Target met 🎉" : "Impossible");
-
-    document.getElementById('paceDiff').innerHTML = paceDiffText;
+    document.getElementById('paceDiff').innerHTML = diff >= 0 ? `<span class="status-good">+${diff} (Ahead)</span>` : `<span class="status-bad">${diff} (Behind)</span>`;
     document.getElementById('gamesRemaining').innerText = Math.max(0, gamesRemaining);
-    document.getElementById('sixesShort').innerText = sixesShort > 0 ? sixesShort : 0;
-    document.getElementById('currentAvg').innerText = currentAvg;
-    document.getElementById('neededPerGame').innerText = neededPerGame;
-
-    const statusEl = document.getElementById('statusMessage');
-    if (gamesRemaining <= 0) {
-        statusEl.innerHTML = sixesShort <= 0 
-            ? "<span class='status-good'>Target reached or exceeded! 🎉</span>"
-            : "<span class='status-bad'>Not enough sixes even if finished.</span>";
-    } else if (neededPerGameRaw <= PAR_RATE + 0.01) {  // small tolerance
-        statusEl.innerHTML = "<span class='status-good'>On pace or ahead! Keep going 👍</span>";
-    } else {
-        statusEl.innerHTML = "<span class='status-bad'>Need to hit more sixes per game 😬</span>";
-    }
+    document.getElementById('sixesShort').innerText = Math.max(0, sixesShort);
+    document.getElementById('currentAvg').innerText = gamesPlayed > 0 ? (sixesHit / gamesPlayed).toFixed(2) : "0.00";
+    document.getElementById('neededPerGame').innerText = gamesRemaining > 0 ? (sixesShort / gamesRemaining).toFixed(2) : "Target met 🎉";
 }
 
-// Attach real-time listeners
-document.getElementById('gamesPlayed').addEventListener('input', updateResults);
-document.getElementById('sixesHit').addEventListener('input', updateResults);
-
-// Initial build and calculation
-window.onload = () => {
-    buildLeaderboard();
-    updateResults();  // show results immediately with prefilled values
-};
+window.onload = loadData;
 </script>
 </body>
 </html>
