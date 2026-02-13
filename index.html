@@ -67,27 +67,10 @@
             border-color: #1a73e8;
             outline: none;
         }
-        button {
-            width: 100%;
-            padding: 15px;
-            background-color: #1a73e8;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: background-color 0.2s;
-        }
-        button:hover {
-            background-color: #1557b0;
-        }
         .results {
             margin-top: 25px;
             border-top: 2px solid #f0f2f5;
             padding-top: 20px;
-            display: none;
         }
         .result-item {
             display: flex;
@@ -163,7 +146,6 @@
         <label for="sixesHit">Total Sixes Hit</label>
         <input type="number" id="sixesHit" placeholder="e.g. 256" value="256">
     </div>
-    <button onclick="calculate()">Calculate</button>
 
     <div class="results" id="resultsArea">
         <div class="result-item">
@@ -236,15 +218,15 @@ const schedule = [
     ["USA", "Netherlands", 6, 0]
 ];
 
-// Pre-calculate totals for pre-filling
+// Pre-calculate totals
 const matchesCompleted = schedule.length;
 const totalSixesFromData = schedule.reduce((sum, match) => sum + match[2] + match[3], 0);
 
-// Auto-fill inputs on page load
+// Auto-fill inputs
 document.getElementById('gamesPlayed').value = matchesCompleted;
 document.getElementById('sixesHit').value = totalSixesFromData;
 
-// Build leaderboard + tally
+// Leaderboard + tally
 function buildLeaderboard() {
     const countrySixes = {};
     
@@ -274,17 +256,21 @@ function buildLeaderboard() {
     document.getElementById('matchesPlayed').textContent = matchesCompleted;
 }
 
-// Calculator function
-function calculate() {
+// Real-time calculation
+function updateResults() {
     const TOTAL_GAMES = 55;
     const TARGET_SIXES = 730;
     const PAR_RATE = TARGET_SIXES / TOTAL_GAMES;
 
-    const gamesPlayed = parseFloat(document.getElementById('gamesPlayed').value);
-    const sixesHit = parseFloat(document.getElementById('sixesHit').value);
+    const gamesPlayedInput = document.getElementById('gamesPlayed');
+    const sixesHitInput = document.getElementById('sixesHit');
 
-    if (isNaN(gamesPlayed) || isNaN(sixesHit)) {
-        alert("Please enter valid numbers.");
+    const gamesPlayed = parseFloat(gamesPlayedInput.value) || 0;
+    const sixesHit = parseFloat(sixesHitInput.value) || 0;
+
+    // Basic validation / graceful handling
+    if (gamesPlayed < 0 || sixesHit < 0) {
+        document.getElementById('statusMessage').innerHTML = "<span class='status-bad'>Please enter non-negative numbers.</span>";
         return;
     }
 
@@ -297,32 +283,39 @@ function calculate() {
         ? `<span class="status-good">+${diff} (Ahead)</span>`
         : `<span class="status-bad">${diff} (Behind)</span>`;
 
-    const currentAvg = gamesPlayed > 0 ? (sixesHit / gamesPlayed).toFixed(2) : 0;
+    const currentAvg = gamesPlayed > 0 ? (sixesHit / gamesPlayed).toFixed(2) : "0.00";
+    const neededPerGameRaw = gamesRemaining > 0 ? (sixesShort / gamesRemaining) : 0;
     const neededPerGame = gamesRemaining > 0 
-        ? (sixesShort / gamesRemaining).toFixed(2)
-        : (sixesShort <= 0 ? "Won" : "Lost");
+        ? neededPerGameRaw.toFixed(2)
+        : (sixesShort <= 0 ? "Target met 🎉" : "Impossible");
 
-    document.getElementById('resultsArea').style.display = 'block';
     document.getElementById('paceDiff').innerHTML = paceDiffText;
-    document.getElementById('gamesRemaining').innerText = gamesRemaining;
+    document.getElementById('gamesRemaining').innerText = Math.max(0, gamesRemaining);
     document.getElementById('sixesShort').innerText = sixesShort > 0 ? sixesShort : 0;
     document.getElementById('currentAvg').innerText = currentAvg;
     document.getElementById('neededPerGame').innerText = neededPerGame;
 
     const statusEl = document.getElementById('statusMessage');
-    if (gamesRemaining > 0) {
-        if (sixesShort <= 0) {
-            statusEl.innerHTML = "<span class='status-good'>Target already reached! 🎉</span>";
-        } else if (parseFloat(neededPerGame) <= PAR_RATE) {
-            statusEl.innerHTML = "<span class='status-good'>You are on track! Keep it up. 👍</span>";
-        } else {
-            statusEl.innerHTML = "<span class='status-bad'>Behind pace. Time to go big! 😬</span>";
-        }
+    if (gamesRemaining <= 0) {
+        statusEl.innerHTML = sixesShort <= 0 
+            ? "<span class='status-good'>Target reached or exceeded! 🎉</span>"
+            : "<span class='status-bad'>Not enough sixes even if finished.</span>";
+    } else if (neededPerGameRaw <= PAR_RATE + 0.01) {  // small tolerance
+        statusEl.innerHTML = "<span class='status-good'>On pace or ahead! Keep going 👍</span>";
+    } else {
+        statusEl.innerHTML = "<span class='status-bad'>Need to hit more sixes per game 😬</span>";
     }
 }
 
-// Run on load
-window.onload = buildLeaderboard;
+// Attach real-time listeners
+document.getElementById('gamesPlayed').addEventListener('input', updateResults);
+document.getElementById('sixesHit').addEventListener('input', updateResults);
+
+// Initial build and calculation
+window.onload = () => {
+    buildLeaderboard();
+    updateResults();  // show results immediately with prefilled values
+};
 </script>
 </body>
 </html>
