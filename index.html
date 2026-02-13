@@ -22,13 +22,19 @@
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             width: 100%;
-            max-width: 400px;
+            max-width: 500px; /* slightly wider for leaderboard */
         }
         h1 {
             text-align: center;
             color: #1a73e8;
             margin-bottom: 20px;
             font-size: 24px;
+        }
+        h2 {
+            text-align: center;
+            color: #1557b0;
+            margin: 30px 0 15px;
+            font-size: 20px;
         }
         .target-box {
             background-color: #e8f0fe;
@@ -94,7 +100,6 @@
         }
         .highlight {
             color: #d93025;
-            font-size: 18px;
         }
         .status-good {
             color: #188038;
@@ -102,13 +107,38 @@
         .status-bad {
             color: #d93025;
         }
+        /* Leaderboard styles */
+        .leaderboard {
+            margin-top: 20px;
+        }
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .leaderboard-table th, .leaderboard-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        .leaderboard-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        .leaderboard-table tr:hover {
+            background-color: #f8f9fa;
+        }
+        .rank {
+            width: 50px;
+            font-weight: bold;
+            color: #1a73e8;
+        }
     </style>
 </head>
 <body>
-
 <div class="container">
-    <h1>🏏 Sixes Tracker</h1>
-    
+    <h1>🏏 2026 WC Sixes Tracker</h1>
+   
     <div class="target-box">
         Target: 730 Sixes (55 Matches)
     </div>
@@ -117,12 +147,10 @@
         <label for="gamesPlayed">Games Played So Far</label>
         <input type="number" id="gamesPlayed" placeholder="e.g. 10">
     </div>
-
     <div class="input-group">
         <label for="sixesHit">Total Sixes Hit</label>
         <input type="number" id="sixesHit" placeholder="e.g. 120">
     </div>
-
     <button onclick="calculate()">Calculate</button>
 
     <div class="results" id="resultsArea">
@@ -148,60 +176,126 @@
         </div>
         <div id="statusMessage" style="text-align: center; margin-top: 15px; font-style: italic; font-size: 14px;"></div>
     </div>
+
+    <!-- Leaderboard Section -->
+    <h2>🏆 Sixes Leaderboard by Country</h2>
+    <div class="leaderboard">
+        <table class="leaderboard-table" id="leaderboardTable">
+            <thead>
+                <tr>
+                    <th class="rank">#</th>
+                    <th>Country</th>
+                    <th style="text-align:right;">Sixes</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboardBody"></tbody>
+        </table>
+    </div>
 </div>
 
 <script>
-    function calculate() {
-        const TOTAL_GAMES = 55;
-        const TARGET_SIXES = 730;
-        const PAR_RATE = TARGET_SIXES / TOTAL_GAMES; // ~13.27
+// Your match data
+const schedule = [
+    ["Pakistan", "Netherlands", 6, 2],
+    ["West Indies", "Scotland", 11, 5],
+    ["India", "USA", 7, 7],
+    ["New Zealand", "Afghanistan", 7, 9],
+    ["England", "Nepal", 11, 7],
+    ["Sri Lanka", "Ireland", 3, 1],
+    ["Scotland", "Italy", 10, 7],
+    ["Zimbabwe", "Oman", 1, 0],
+    ["South Africa", "Canada", 7, 3],
+    ["Netherlands", "Namibia", 9, 7],
+    ["New Zealand", "UAE", 8, 7],
+    ["Pakistan", "USA", 10, 6],
+    ["South Africa", "Afghanistan", 10, 10],
+    ["Australia", "Ireland", 5, 5],
+    ["England", "West Indies", 6, 13],
+    ["Sri Lanka", "Oman", 8, 4],
+    ["Nepal", "Italy", 3, 9],
+    ["India", "Namibia", 14, 4],
+    ["Australia", "Zimbabwe", 3, 1],
+    ["Canada", "UAE", 4, 6],
+    ["USA", "Netherlands", 0, 0]
+];
 
-        const gamesPlayed = parseFloat(document.getElementById('gamesPlayed').value);
-        const sixesHit = parseFloat(document.getElementById('sixesHit').value);
+// Calculate leaderboard once on page load
+function buildLeaderboard() {
+    const countrySixes = {};
+    
+    schedule.forEach(match => {
+        const [team1, team2, six1, six2] = match;
+        countrySixes[team1] = (countrySixes[team1] || 0) + six1;
+        countrySixes[team2] = (countrySixes[team2] || 0) + six2;
+    });
 
-        if (isNaN(gamesPlayed) || isNaN(sixesHit)) {
-            alert("Please enter valid numbers.");
-            return;
-        }
+    // Sort descending by sixes
+    const sorted = Object.entries(countrySixes)
+        .sort((a, b) => b[1] - a[1]);
 
-        const gamesRemaining = TOTAL_GAMES - gamesPlayed;
-        const sixesShort = TARGET_SIXES - sixesHit;
-        
-        // 1. Calculate how many sixes you SHOULD have hit by now
-        const parSixesByNow = PAR_RATE * gamesPlayed;
-        const diff = (sixesHit - parSixesByNow).toFixed(1);
-        
-        let paceDiffText = "";
-        if (diff >= 0) {
-            paceDiffText = `<span class="status-good">+${diff} (Ahead)</span>`;
+    const tbody = document.getElementById('leaderboardBody');
+    tbody.innerHTML = '';
+
+    sorted.forEach(([country, sixes], index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td class="rank">${index + 1}</td>
+            <td>${country}</td>
+            <td style="text-align:right; font-weight:bold;">${sixes}</td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+// Your original calculator function
+function calculate() {
+    const TOTAL_GAMES = 55;
+    const TARGET_SIXES = 730;
+    const PAR_RATE = TARGET_SIXES / TOTAL_GAMES;
+
+    const gamesPlayed = parseFloat(document.getElementById('gamesPlayed').value);
+    const sixesHit = parseFloat(document.getElementById('sixesHit').value);
+
+    if (isNaN(gamesPlayed) || isNaN(sixesHit)) {
+        alert("Please enter valid numbers.");
+        return;
+    }
+
+    const gamesRemaining = TOTAL_GAMES - gamesPlayed;
+    const sixesShort = TARGET_SIXES - sixesHit;
+    const parSixesByNow = PAR_RATE * gamesPlayed;
+    const diff = (sixesHit - parSixesByNow).toFixed(1);
+
+    let paceDiffText = diff >= 0 
+        ? `<span class="status-good">+${diff} (Ahead)</span>`
+        : `<span class="status-bad">${diff} (Behind)</span>`;
+
+    const currentAvg = gamesPlayed > 0 ? (sixesHit / gamesPlayed).toFixed(2) : 0;
+    const neededPerGame = gamesRemaining > 0 
+        ? (sixesShort / gamesRemaining).toFixed(2)
+        : (sixesShort <= 0 ? "Won" : "Lost");
+
+    document.getElementById('resultsArea').style.display = 'block';
+    document.getElementById('paceDiff').innerHTML = paceDiffText;
+    document.getElementById('gamesRemaining').innerText = gamesRemaining;
+    document.getElementById('sixesShort').innerText = sixesShort > 0 ? sixesShort : 0;
+    document.getElementById('currentAvg').innerText = currentAvg;
+    document.getElementById('neededPerGame').innerText = neededPerGame;
+
+    const statusEl = document.getElementById('statusMessage');
+    if (gamesRemaining > 0) {
+        if (sixesShort <= 0) {
+            statusEl.innerHTML = "<span class='status-good'>Target already reached! 🎉</span>";
+        } else if (parseFloat(neededPerGame) <= PAR_RATE) {
+            statusEl.innerHTML = "<span class='status-good'>You are on track! Keep it up. 👍</span>";
         } else {
-            paceDiffText = `<span class="status-bad">${diff} (Behind)</span>`;
-        }
-
-        let currentAvg = gamesPlayed > 0 ? (sixesHit / gamesPlayed).toFixed(2) : 0;
-        let neededPerGame = gamesRemaining > 0 ? (sixesShort / gamesRemaining).toFixed(2) : (sixesShort <= 0 ? "Won" : "Lost");
-
-        // Display
-        document.getElementById('resultsArea').style.display = 'block';
-        document.getElementById('paceDiff').innerHTML = paceDiffText;
-        document.getElementById('gamesRemaining').innerText = gamesRemaining;
-        document.getElementById('sixesShort').innerText = sixesShort > 0 ? sixesShort : 0;
-        document.getElementById('currentAvg').innerText = currentAvg;
-        document.getElementById('neededPerGame').innerText = neededPerGame;
-
-        // Status Message logic
-        const statusEl = document.getElementById('statusMessage');
-        if (gamesRemaining > 0) {
-            if (sixesShort <= 0) {
-                statusEl.innerHTML = "<span class='status-good'>Target already reached! 🎉</span>";
-            } else if (parseFloat(neededPerGame) <= PAR_RATE) {
-                statusEl.innerHTML = "<span class='status-good'>You are on track! Keep it up. 👍</span>";
-            } else {
-                statusEl.innerHTML = "<span class='status-bad'>Behind pace. Time to go big! 😬</span>";
-            }
+            statusEl.innerHTML = "<span class='status-bad'>Behind pace. Time to go big! 😬</span>";
         }
     }
-</script>
+}
 
+// Build leaderboard when page loads
+window.onload = buildLeaderboard;
+</script>
 </body>
 </html>
