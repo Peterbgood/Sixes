@@ -1,274 +1,207 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🏏 Sixes Frenzy • World Cup 2025</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
-  <style>
-    body { background: linear-gradient(135deg, #0a0f1c, #1a2a2a); }
-   .cricket-green { color: #22c55e; }
-   .gold { color: #fbbf24; }
-   .table-row:hover { background-color: #1f2937; }
-   .progress-bar { transition: width 1.5s ease-out; }
-  </style>
-</head>
-<body class="text-white min-h-screen pb-12">
-  <div class="max-w-7xl mx-auto px-6 py-8">
-
-    <!-- Header -->
-    <div class="flex items-center justify-between mb-10">
-      <div class="flex items-center gap-4">
-        <div class="text-5xl">🏏</div>
-        <div>
-          <h1 class="text-4xl font-bold tracking-tight">Sixes Frenzy</h1>
-          <p class="text-emerald-400 text-lg">World Cup • 18/55 Matches</p>
-        </div>
-      </div>
-      <div class="text-right">
-        <div class="text-sm text-gray-400">Target to win bet</div>
-        <div class="text-3xl font-bold gold">730 Sixes</div>
-      </div>
-    </div>
-
-    <!-- Hero Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-      <div class="bg-zinc-900/70 backdrop-blur-xl border border-emerald-900 rounded-3xl p-8 text-center">
-        <p class="text-emerald-400 text-sm mb-1">SIXES HIT</p>
-        <p id="totalSixes" class="text-6xl font-bold text-white">248</p>
-        <p class="text-2xl text-emerald-400">in 18 games</p>
-      </div>
-
-      <div class="bg-zinc-900/70 backdrop-blur-xl border border-emerald-900 rounded-3xl p-8 text-center">
-        <p class="text-emerald-400 text-sm mb-1">PROGRESS TO 730</p>
-        <div class="relative h-4 bg-zinc-800 rounded-full overflow-hidden mt-4">
-          <div id="progressBar" class="progress-bar h-full bg-gradient-to-r from-emerald-400 to-lime-400 w-[34%]"></div>
-        </div>
-        <p id="progressText" class="text-3xl font-bold mt-3">34%</p>
-        <p class="text-sm text-gray-400">482 more needed in 37 games</p>
-      </div>
-
-      <div class="bg-zinc-900/70 backdrop-blur-xl border border-emerald-900 rounded-3xl p-8 text-center">
-        <p class="text-emerald-400 text-sm mb-1">AVG SIXES/GAME</p>
-        <p class="text-6xl font-bold">13.8</p>
-        <p class="text-emerald-400">Current pace</p>
-      </div>
-
-      <div class="bg-zinc-900/70 backdrop-blur-xl border border-emerald-900 rounded-3xl p-8 text-center">
-        <p class="text-emerald-400 text-sm mb-1">PROJECTED TOTAL</p>
-        <p class="text-6xl font-bold text-lime-400">758</p>
-        <p class="text-sm text-lime-400">+28 over target 🔥</p>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-
-      <!-- Leaderboard -->
-      <div class="lg:col-span-7 bg-zinc-900/70 backdrop-blur-xl border border-emerald-900 rounded-3xl p-8">
-        <div class="flex justify-between items-center mb-6">
-          <h2 class="text-2xl font-bold flex items-center gap-3">
-            <i class="fa-solid fa-trophy gold"></i>
-            SIXES LEADERBOARD
-          </h2>
-          <!-- Search input for leaderboard is now removed from here -->
-        </div>
-
-        <table class="w-full" id="leaderboardTable">
-          <thead>
-            <tr class="border-b border-zinc-700">
-              <th class="py-4 text-left">Rank</th>
-              <th class="py-4 text-left">Team</th>
-              <th class="py-4 text-center">Sixes</th>
-              <th class="py-4 text-center">Matches</th>
-              <th class="py-4 text-center">Avg / Game</th>
-            </tr>
-          </thead>
-          <tbody id="leaderboardBody" class="divide-y divide-zinc-800"></tbody>
-        </table>
-      </div>
-
-      <!-- Top Teams Chart -->
-      <div class="lg:col-span-5 bg-zinc-900/70 backdrop-blur-xl border border-emerald-900 rounded-3xl p-8">
-        <h2 class="text-2xl font-bold mb-6">Top 8 Teams (Sixes)</h2>
-        <canvas id="sixesChart" class="w-full h-96"></canvas>
-      </div>
-
-    </div>
-
-    <!-- All Matches -->
-    <div class="mt-12">
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold flex items-center gap-3">
-          <i class="fa-solid fa-list"></i>
-          All Matches (18)
-        </h2>
-        <input 
-          id="searchInput"
-          type="text" 
-          placeholder="Search team..." 
-          class="bg-zinc-800 border border-zinc-700 rounded-xl px-5 py-3 focus:outline-none focus:border-emerald-500 w-64"
-        />
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="matchesGrid"></div>
-    </div>
-
-  </div>
-
-  <script>
-    const schedule = [
-      ["Pakistan", "Netherlands", 6, 2],
-      ["West Indies", "Scotland", 11, 5],
-      ["India", "USA", 7, 7],
-      ["New Zealand", "Afghanistan", 7, 9],
-      ["England", "Nepal", 11, 7],
-      ["Sri Lanka", "Ireland", 3, 1],
-      ["Scotland", "Italy", 10, 7],
-      ["Zimbabwe", "Oman", 1, 0],
-      ["South Africa", "Canada", 7, 3],
-      ["Netherlands", "Namibia", 9, 7],
-      ["New Zealand", "UAE", 8, 7],
-      ["Pakistan", "USA", 10, 6],
-      ["South Africa", "Afghanistan", 10, 10],
-      ["Australia", "Ireland", 5, 5],
-      ["England", "West Indies", 6, 13],
-      ["Sri Lanka", "Oman", 8, 4],
-      ["Nepal", "Italy", 3, 9],
-      ["India", "Namibia", 14, 4],
-      ["Australia", "Namibia", 3, 1],
-        ["Canada", "UAE", 4, 6],
-        ["USA", "Netherlands", 0, 0]
-    ];
-
-    // Calculate team stats
-    const teamStats = {};
-    let totalSixes = 0;
-
-    schedule.forEach(([t1, t2, s1, s2]) => {
-      totalSixes += s1 + s2;
-
-      // Ensure teamStats[t1] and teamStats[t2] are initialized
-      if (!teamStats[t1]) teamStats[t1] = { sixes: 0, matches: 0 };
-      if (!teamStats[t2]) teamStats[t2] = { sixes: 0, matches: 0 };
-
-      teamStats[t1].sixes += s1;
-      teamStats[t1].matches += 1;
-      teamStats[t2].sixes += s2;
-      teamStats[t2].matches += 1;
-    });
-
-    // Prepare leaderboard data
-    let leaderboardData = Object.entries(teamStats).map(([team, data]) => ({
-      team,
-      sixes: data.sixes,
-      matches: data.matches,
-      avg: data.matches > 0? (data.sixes / data.matches).toFixed(1) : 0 // Handle division by zero
-    })).sort((a, b) => b.sixes - a.sixes);
-
-    // Render Leaderboard
-    function renderLeaderboard(filteredData) {
-      const tbody = document.getElementById('leaderboardBody');
-      tbody.innerHTML = '';
-
-      filteredData.forEach((item, index) => {
-        const row = document.createElement('tr');
-        row.className = 'table-row';
-        row.innerHTML = `
-          <td class="py-5 font-bold text-emerald-400">${index + 1}</td>
-          <td class="py-5 font-semibold">${item.team}</td>
-          <td class="py-5 text-center text-2xl font-bold">${item.sixes}</td>
-          <td class="py-5 text-center">${item.matches}</td>
-          <td class="py-5 text-center">${item.avg}</td>
-        `;
-        tbody.appendChild(row);
-      });
-    }
-
-    // Render Matches
-    function renderMatches(filteredSchedule = schedule) { // Added filteredSchedule for search functionality
-      const container = document.getElementById('matchesGrid');
-      container.innerHTML = '';
-
-      filteredSchedule.forEach(([t1, t2, s1, s2]) => {
-        const total = s1 + s2;
-        const isHigh = total >= 20;
-
-        const card = document.createElement('div');
-        card.className = `bg-zinc-900/70 border ${isHigh? 'border-lime-400' : 'border-zinc-700'} rounded-3xl p-6 hover:scale-105 transition-transform`;
-        card.innerHTML = `
-          <div class="flex justify-between items-center mb-4">
-            <div class="text-right">
-              <div class="font-semibold">${t1}</div>
-              <div class="text-4xl font-bold text-emerald-400">${s1}</div>
-            </div>
-            <div class="text-center">
-              <div class="text-xs text-gray-500">VS</div>
-              <div class="text-xl font-bold ${isHigh? 'text-lime-400' : ''}">${total}</div>
-            </div>
-            <div>
-              <div class="font-semibold">${t2}</div>
-              <div class="text-4xl font-bold text-emerald-400">${s2}</div>
-            </div>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    // Chart
-    let sixesChartInstance = null; // Store chart instance
-    function createChart() {
-      const top8 = leaderboardData.slice(0, 8); // Always use the sorted leaderboardData for the chart
-      const ctx = document.getElementById('sixesChart');
-
-      if (sixesChartInstance) {
-          sixesChartInstance.destroy(); // Destroy existing chart before creating a new one
-      }
-
-      sixesChartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: top8.map(t => t.team),
-          datasets: [{
-            label: 'Sixes',
-            data: top8.map(t => t.sixes),
-            backgroundColor: '#22c55e',
-            borderColor: '#86efac',
-            borderWidth: 2,
-            borderRadius: 8
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            y: { grid: { color: '#27272a' }, ticks: { color: '#a1a1aa' } },
-            x: { grid: { color: '#27272a' }, ticks: { color: '#a1a1aa' } }
-          }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 WC Sixes Tracker</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            color: #333;
         }
-      });
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        h1 {
+            text-align: center;
+            color: #1a73e8;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .target-box {
+            background-color: #e8f0fe;
+            color: #1a73e8;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+        input[type="number"]:focus {
+            border-color: #1a73e8;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #1557b0;
+        }
+        .results {
+            margin-top: 25px;
+            border-top: 2px solid #f0f2f5;
+            padding-top: 20px;
+            display: none;
+        }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
+        .result-value {
+            font-weight: bold;
+        }
+        .highlight {
+            color: #d93025;
+            font-size: 18px;
+        }
+        .status-good {
+            color: #188038;
+        }
+        .status-bad {
+            color: #d93025;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🏏 Sixes Tracker</h1>
+    
+    <div class="target-box">
+        Target: 730 Sixes (55 Matches)
+    </div>
+
+    <div class="input-group">
+        <label for="gamesPlayed">Games Played So Far</label>
+        <input type="number" id="gamesPlayed" placeholder="e.g. 10">
+    </div>
+
+    <div class="input-group">
+        <label for="sixesHit">Total Sixes Hit</label>
+        <input type="number" id="sixesHit" placeholder="e.g. 120">
+    </div>
+
+    <button onclick="calculate()">Calculate</button>
+
+    <div class="results" id="resultsArea">
+        <div class="result-item">
+            <span>Current Pace vs Target:</span>
+            <span class="result-value" id="paceDiff">0</span>
+        </div>
+        <div class="result-item">
+            <span>Games Remaining:</span>
+            <span class="result-value" id="gamesRemaining">0</span>
+        </div>
+        <div class="result-item">
+            <span>Sixes Short:</span>
+            <span class="result-value" id="sixesShort">0</span>
+        </div>
+        <div class="result-item">
+            <span>Current Avg/Game:</span>
+            <span class="result-value" id="currentAvg">0</span>
+        </div>
+        <div class="result-item" style="margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 15px;">
+            <span style="font-size: 16px; font-weight: bold;">Needed Per Game:</span>
+            <span class="result-value highlight" id="neededPerGame">0</span>
+        </div>
+        <div id="statusMessage" style="text-align: center; margin-top: 15px; font-style: italic; font-size: 14px;"></div>
+    </div>
+</div>
+
+<script>
+    function calculate() {
+        const TOTAL_GAMES = 55;
+        const TARGET_SIXES = 730;
+        const PAR_RATE = TARGET_SIXES / TOTAL_GAMES; // ~13.27
+
+        const gamesPlayed = parseFloat(document.getElementById('gamesPlayed').value);
+        const sixesHit = parseFloat(document.getElementById('sixesHit').value);
+
+        if (isNaN(gamesPlayed) || isNaN(sixesHit)) {
+            alert("Please enter valid numbers.");
+            return;
+        }
+
+        const gamesRemaining = TOTAL_GAMES - gamesPlayed;
+        const sixesShort = TARGET_SIXES - sixesHit;
+        
+        // 1. Calculate how many sixes you SHOULD have hit by now
+        const parSixesByNow = PAR_RATE * gamesPlayed;
+        const diff = (sixesHit - parSixesByNow).toFixed(1);
+        
+        let paceDiffText = "";
+        if (diff >= 0) {
+            paceDiffText = `<span class="status-good">+${diff} (Ahead)</span>`;
+        } else {
+            paceDiffText = `<span class="status-bad">${diff} (Behind)</span>`;
+        }
+
+        let currentAvg = gamesPlayed > 0 ? (sixesHit / gamesPlayed).toFixed(2) : 0;
+        let neededPerGame = gamesRemaining > 0 ? (sixesShort / gamesRemaining).toFixed(2) : (sixesShort <= 0 ? "Won" : "Lost");
+
+        // Display
+        document.getElementById('resultsArea').style.display = 'block';
+        document.getElementById('paceDiff').innerHTML = paceDiffText;
+        document.getElementById('gamesRemaining').innerText = gamesRemaining;
+        document.getElementById('sixesShort').innerText = sixesShort > 0 ? sixesShort : 0;
+        document.getElementById('currentAvg').innerText = currentAvg;
+        document.getElementById('neededPerGame').innerText = neededPerGame;
+
+        // Status Message logic
+        const statusEl = document.getElementById('statusMessage');
+        if (gamesRemaining > 0) {
+            if (sixesShort <= 0) {
+                statusEl.innerHTML = "<span class='status-good'>Target already reached! 🎉</span>";
+            } else if (parseFloat(neededPerGame) <= PAR_RATE) {
+                statusEl.innerHTML = "<span class='status-good'>You are on track! Keep it up. 👍</span>";
+            } else {
+                statusEl.innerHTML = "<span class='status-bad'>Behind pace. Time to go big! 😬</span>";
+            }
+        }
     }
+</script>
 
-    // Search functionality (for "All Matches" section)
-    document.getElementById('searchInput').addEventListener('input', (e) => {
-      const term = e.target.value.toLowerCase();
-      const filteredMatches = schedule.filter(([t1, t2]) => 
-        t1.toLowerCase().includes(term) || t2.toLowerCase().includes(term)
-      );
-      renderMatches(filteredMatches);
-    });
-
-    // Initialize everything
-    document.getElementById('totalSixes').textContent = totalSixes;
-    const progress = Math.round((totalSixes / 730) * 100);
-    document.getElementById('progressBar').style.width = `${progress}%`;
-    document.getElementById('progressText').textContent = `${progress}%`;
-
-    renderLeaderboard(leaderboardData); // Initial render of the full leaderboard
-    renderMatches(); // Initial render of all matches
-    createChart(); // Initial chart creation
-  </script>
 </body>
 </html>
